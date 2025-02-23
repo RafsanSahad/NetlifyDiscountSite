@@ -9,7 +9,7 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #f4f4f4;
+            background-color: rgb(86, 2, 61);
             margin: 0;
             padding: 0;
         }
@@ -24,6 +24,10 @@
             margin: auto;
             padding: 20px;
         }
+        .shop-title {
+    color: #e2e2e2; /* Change to your preferred color */
+        }
+
         .btn {
             display: block;
             width: 80%;
@@ -97,7 +101,7 @@
 <body>
     <div class="container">
         <img src="/logo.png" alt="Shop Logo" class="logo">
-        <h2>Welcome to Our Shop</h2>
+        <h2 class="shop-title">Welcome to Our Shop</h2>
         <button class="btn coupon-btn" onclick="getCoupon()">Get Your Coupon</button>
         <button class="btn discount-btn" onclick="getDiscount()">Get Your Discount</button>
         
