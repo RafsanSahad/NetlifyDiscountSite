@@ -13,6 +13,10 @@
             margin: 0;
             padding: 0;
         }
+        #purchase-label {
+    color: white;
+        }
+
         .logo {
     width: 150px; /* Adjust size */
     display: block;
@@ -114,16 +118,16 @@
             <div id="follow-section-coupon" class="follow-section hidden">
                 <p>Follow us on social media to redeem your coupon on specific product:</p>
                 <a href="https://www.facebook.com/MollaEnterpriseJsr" target="_blank" class="follow-btn facebook-btn" onclick="markFollowed('facebook')">Facebook</a>
-                <a href="https://www.tiktok.com" target="_blank" class="follow-btn tiktok-btn" onclick="markFollowed('tiktok')">TikTok</a>
+                <a href="https://www.tiktok.com/@mollaenterprise1" target="_blank" class="follow-btn tiktok-btn" onclick="markFollowed('tiktok')">TikTok</a>
                 <button class="btn confirm-btn" id="confirm-follow-coupon" onclick="confirmFollow('coupon')" disabled>Confirm Follow</button>
             </div>
         </div>
         
         <!-- Discount Section -->
         <div id="discount-section" class="hidden">
-            <label for="purchase-amount">Enter Purchase Amount:</label>
+            <label for="purchase-amount" id="purchase-label">Enter Purchase Amount:</label>
             <input type="number" id="purchase-amount" min="1" />
-            <button class="btn get-discount-btn" onclick="generateDiscount()">Get Discount</button>
+            <button class="btn get-discount-btn" onclick="generateDiscount()">Calculate Discount</button>
             <div class="scratch-box">
                 <div class="scratch-content" id="scratch-discount">BDT 0</div>
                 <canvas id="scratch-discount-canvas"></canvas>
@@ -173,51 +177,77 @@
         }
 
         function getCoupon() {
-            let couponAmount = Math.floor(Math.random() * 41) + 20; // Random BDT 20 - 60
-            document.getElementById('scratch-coupon').innerText = "BDT " + couponAmount;
-            document.getElementById('coupon-section').classList.remove('hidden');
-            setupScratchPad("scratch-coupon-canvas", "follow-section-coupon");
-        }
+    if (sessionStorage.getItem('generatedCoupon')) {
+        alert("You have already generated a coupon in this session.");
+        return;
+    }
+
+    let couponAmount = Math.floor(Math.random() * 41) + 20; // Random BDT 20 - 60
+    document.getElementById('scratch-coupon').innerText = "BDT " + couponAmount;
+    document.getElementById('coupon-section').classList.remove('hidden');
+
+    // Mark coupon as generated for this session
+    sessionStorage.setItem('generatedCoupon', "true");
+
+    setupScratchPad("scratch-coupon-canvas", "follow-section-coupon");
+    }
+
 
         function getDiscount() {
-            document.getElementById('discount-section').classList.remove('hidden');
-        }
+    if (sessionStorage.getItem('generatedDiscount')) {
+        alert("You have already generated a discount in this session.");
+        return;
+    }
 
-        function generateDiscount() {
-            let amount = parseInt(document.getElementById('purchase-amount').value);
-            if (isNaN(amount) || amount <= 0) {
-                alert("Please enter a valid purchase amount.");
-                return;
-            }
+    document.getElementById('discount-section').classList.remove('hidden');
+    }
 
-            let minDiscount, maxDiscount;
-            
-            if (amount < 1000) {
-                minDiscount = 10; maxDiscount = 50;
-            } else if (amount >= 1000 && amount <= 1500) {
-                minDiscount = 10; maxDiscount = 100;
-            } else if (amount > 1500 && amount <= 2500) {
-                minDiscount = 50; maxDiscount = 150;
-            } else if (amount > 2500 && amount <= 3500) {
-                minDiscount = 100; maxDiscount = 200;
-            } else if (amount > 3500 && amount <= 5000) {
-                minDiscount = 150; maxDiscount = 250;
-            } else if (amount > 5000 && amount <= 8000) {
-                minDiscount = 250; maxDiscount = 350;
-            } else if (amount > 8500 && amount <= 12000) {
-                minDiscount = 250; maxDiscount = 450;
-            } else if (amount > 12000 && amount <= 20000) {
-                minDiscount = 300; maxDiscount = 500;
-            } else { // Greater than 20000
-                minDiscount = 500; maxDiscount = 1200;
-            }
 
-            let discountAmount = Math.floor(Math.random() * (maxDiscount - minDiscount + 1)) + minDiscount;
-            document.getElementById('scratch-discount').innerText = "BDT " + discountAmount;
-            
-            document.getElementById('discount-section').classList.remove('hidden');
-            setupScratchPad("scratch-discount-canvas", "follow-section-discount");
-        }
+    function generateDiscount() {
+    // Check if discount was already generated in this session
+    if (sessionStorage.getItem('generatedDiscount')) {
+        alert("You have already generated a discount in this session.");
+        return;
+    }
+
+    let amount = parseInt(document.getElementById('purchase-amount').value);
+    if (isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid purchase amount.");
+        return;
+    }
+
+    let minDiscount, maxDiscount;
+    
+    if (amount < 1000) {
+        minDiscount = 10; maxDiscount = 50;
+    } else if (amount >= 1000 && amount <= 1500) {
+        minDiscount = 10; maxDiscount = 100;
+    } else if (amount > 1500 && amount <= 2500) {
+        minDiscount = 50; maxDiscount = 150;
+    } else if (amount > 2500 && amount <= 3500) {
+        minDiscount = 100; maxDiscount = 200;
+    } else if (amount > 3500 && amount <= 5000) {
+        minDiscount = 150; maxDiscount = 250;
+    } else if (amount > 5000 && amount <= 8000) {
+        minDiscount = 250; maxDiscount = 350;
+    } else if (amount > 8500 && amount <= 12000) {
+        minDiscount = 250; maxDiscount = 450;
+    } else if (amount > 12000 && amount <= 20000) {
+        minDiscount = 300; maxDiscount = 500;
+    } else { // Greater than 20000
+        minDiscount = 500; maxDiscount = 1200;
+    }
+
+    let discountAmount = Math.floor(Math.random() * (maxDiscount - minDiscount + 1)) + minDiscount;
+    document.getElementById('scratch-discount').innerText = "BDT " + discountAmount;
+
+    document.getElementById('discount-section').classList.remove('hidden');
+
+    // Mark discount as generated for this session
+    sessionStorage.setItem('generatedDiscount', "true");
+
+    setupScratchPad("scratch-discount-canvas", "follow-section-discount");
+    }
 
         function setupScratchPad(canvasId, followSectionId) {
         let canvas = document.getElementById(canvasId);
