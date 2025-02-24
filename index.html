@@ -18,20 +18,20 @@
         }
 
         .logo {
-            width: 200px; /* Larger logo */
+            width: 400px; /* Larger logo */
             display: block;
             margin: 20px auto;
         }
 
         @media (max-width: 600px) {
             .logo {
-                width: 150px; /* Smaller logo for mobile */
+                width: 450px; /* Smaller logo for mobile */
             }
         }
 
         @media (max-width: 400px) {
             .logo {
-                width: 120px; /* Even smaller for very small devices */
+                width: 220px; /* Even smaller for very small devices */
             }
         }
 
@@ -400,7 +400,7 @@
                 if (!document.hidden) {
                     window.open(url, '_blank'); // Open in a new tab
                 }
-            }, 500); // Wait 500ms to check if the app opened
+            }, 4500); // Wait 500ms to check if the app opened
 
             // Mark Facebook as followed
             markFollowed('facebook', type);
