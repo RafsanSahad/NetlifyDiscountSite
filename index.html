@@ -18,20 +18,20 @@
         }
 
         .logo {
-            width: 400px; /* Larger logo */
+            width: 400px;
             display: block;
             margin: 20px auto;
         }
 
         @media (max-width: 600px) {
             .logo {
-                width: 350px; /* Smaller logo for mobile */
+                width: 350px;
             }
         }
 
         @media (max-width: 400px) {
             .logo {
-                width: 220px; /* Even smaller for very small devices */
+                width: 220px;
             }
         }
 
@@ -49,13 +49,13 @@
         .button-container {
             display: flex;
             justify-content: space-between;
-            gap: 10px; /* Space between buttons */
+            gap: 10px;
             width: 80%;
             margin: 0 auto;
         }
 
         .btn {
-            flex: 1; /* Equal width for buttons */
+            flex: 1;
             padding: 15px;
             border: none;
             border-radius: 5px;
@@ -76,8 +76,11 @@
             height: 120px;
             background: grey;
             margin: 20px auto;
-            position: relative;
-            overflow: hidden;
+            position: fixed; /* Fixed positioning */
+            top: 65%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Adjust for exact center */
+            z-index: 1000; /* Ensure it's above other content */
             touch-action: none;
         }
 
@@ -93,9 +96,9 @@
             font-size: 24px;
             font-weight: bold;
             color: white;
-            background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
-            pointer-events: none; /* Prevents blocking scratching */
-            z-index: 1; /* Above the scratch content but below the canvas */
+            background: rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+            z-index: 1;
         }
 
         canvas {
@@ -105,7 +108,7 @@
             width: 100%;
             height: 100%;
             touch-action: none;
-            z-index: 2; /* Above the overlay */
+            z-index: 2;
         }
 
         .scratch-content {
@@ -119,7 +122,7 @@
             color: black;
             background: white;
             position: absolute;
-            z-index: 0; /* Below the overlay and canvas */
+            z-index: 0;
         }
 
         .follow-section {
@@ -195,13 +198,13 @@
             <div class="follow-section">
                 <p>Follow us to redeem your coupon (Token: <span id="coupon-token"></span>)</p>
                 <p>Terms & Condition Applied</p>
-                <a href="#" onclick="openFacebookApp('https://www.facebook.com/MollaEnterpriseJsr', 'coupon')" class="follow-btn facebook-btn">Facebook</a>
+                <a href="https://www.facebook.com/MollaEnterpriseJsr" target="_blank" class="follow-btn facebook-btn" onclick="markFollowed('facebook', 'coupon')">Facebook</a>
                 <a href="https://www.tiktok.com/@mollaenterprise1" target="_blank" onclick="markFollowed('tiktok', 'coupon')" class="follow-btn tiktok-btn">TikTok</a><br>
                 <button class="btn confirm-btn" id="confirm-follow-coupon" onclick="confirmFollow('coupon')" disabled>Scratch Card</button>
             </div>
             <div class="scratch-box hidden" id="scratch-box-coupon">
                 <div class="scratch-content" id="scratch-coupon">BDT 0</div>
-                <div class="scratch-overlay">Scratch Here</div> <!-- Overlay added here -->
+                <div class="scratch-overlay">Scratch Here</div>
                 <canvas id="scratch-coupon-canvas"></canvas>
             </div>
         </div>
@@ -211,13 +214,13 @@
             <div class="follow-section">
                 <p>Follow us to redeem your discount (Token: <span id="discount-token"></span>):</p>
                 <p>Terms & Condition Applied</p>
-                <a href="#" onclick="openFacebookApp('https://www.facebook.com/MollaEnterpriseJsr', 'discount')" class="follow-btn facebook-btn">Facebook</a>
+                <a href="https://www.facebook.com/MollaEnterpriseJsr" target="_blank" class="follow-btn facebook-btn" onclick="markFollowed('facebook', 'discount')">Facebook</a>
                 <a href="https://www.tiktok.com/@mollaenterprise1" target="_blank" onclick="markFollowed('tiktok', 'discount')" class="follow-btn tiktok-btn">TikTok</a><br>
                 <button class="btn confirm-btn" id="confirm-follow-discount" onclick="confirmFollow('discount')" disabled>Scratch Card</button>
             </div>
             <div class="scratch-box hidden" id="scratch-box-discount">
                 <div class="scratch-content" id="scratch-discount">BDT 0</div>
-                <div class="scratch-overlay">Scratch Here</div> <!-- Overlay added here -->
+                <div class="scratch-overlay">Scratch Here</div>
                 <canvas id="scratch-discount-canvas"></canvas>
             </div>
         </div>
@@ -237,7 +240,7 @@
         // Function to update the current time
         function updateTime() {
             const now = new Date();
-            const dateTimeString = now.toLocaleString(); // Format: "MM/DD/YYYY, HH:MM:SS AM/PM"
+            const dateTimeString = now.toLocaleString();
             document.getElementById('current-time').textContent = dateTimeString;
         }
 
@@ -336,7 +339,8 @@
                 alert("Please follow both platforms first!");
                 return;
             }
-            document.getElementById(`scratch-box-${type}`).classList.remove('hidden');
+            const scratchBox = document.getElementById(`scratch-box-${type}`);
+            scratchBox.classList.remove('hidden'); // Show the scratch box
             alert(`Thank you for following! You can now scratch to reveal your ${type}.`);
             initializeScratch(`scratch-${type}-canvas`, `scratch-${type}`);
         }
@@ -391,19 +395,19 @@
         }
 
         function openFacebookApp(webUrl, type) {
-        // Mark the platform as followed
-        markFollowed('facebook', type);
+            // Mark the platform as followed
+            markFollowed('facebook', type);
 
-        // Attempt to open the Facebook app
-        const appUrl = `fb://profile/MollaEnterpriseJsr`; // Replace with your Facebook profile ID or username
-        window.location.href = appUrl;
+            // Attempt to open the Facebook app
+            const appUrl = `fb://profile/MollaEnterpriseJsr`; // Replace with your Facebook profile ID or username
+            window.location.href = appUrl;
 
-        // Fallback to web URL if the app doesn't open
-        setTimeout(() => {
-            if (!document.hidden) {
-                window.location.href = webUrl;
-            }
-        }, 3500); // Wait 3500ms before falling back
+            // Fallback to web URL if the app doesn't open
+            setTimeout(() => {
+                if (!document.hidden) {
+                    window.location.href = webUrl;
+                }
+            }, 3500); // Wait 3500ms before falling back
         }
     </script>
 </body>
