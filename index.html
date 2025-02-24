@@ -390,20 +390,20 @@
             });
         }
 
-        function openFacebookApp(url, type) {
-            // Try to open the Facebook app using the custom URL scheme
-            const appUrl = `fb://facewebmodal/f?href=${encodeURIComponent(url)}`;
-            window.location.href = appUrl;
+        function openFacebookApp(webUrl, type) {
+        // Mark the platform as followed
+        markFollowed('facebook', type);
 
-            // Fallback to opening the website in a new tab if the app is not installed
-            setTimeout(() => {
-                if (!document.hidden) {
-                    window.open(url, '_blank'); // Open in a new tab
-                }
-            }, 4500); // Wait 500ms to check if the app opened
+        // Attempt to open the Facebook app
+        const appUrl = `fb://profile/MollaEnterpriseJsr`; // Replace with your Facebook profile ID or username
+        window.location.href = appUrl;
 
-            // Mark Facebook as followed
-            markFollowed('facebook', type);
+        // Fallback to web URL if the app doesn't open
+        setTimeout(() => {
+            if (!document.hidden) {
+                window.location.href = webUrl;
+            }
+        }, 3500); // Wait 3500ms before falling back
         }
     </script>
 </body>
