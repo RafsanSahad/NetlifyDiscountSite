@@ -144,7 +144,6 @@
         }
 
         .facebook-btn { background: #1877F2; }
-        .tiktok-btn { background: #000000; }
         .confirm-btn {
             background: #ff6600;
             color: white;
@@ -181,7 +180,7 @@
             <p>Current Date & Time: <span id="current-time"></span></p>
         </div>
         
-        <!-- Main Buttons --->
+        <!-- Main Buttons -->
         <div class="button-container">
             <button class="btn coupon-btn" id="coupon-btn" onclick="getCoupon()">Get Your Coupon</button>
             <button class="btn discount-btn" id="discount-btn" onclick="showDiscountInput()">Discount On Purchase</button>
@@ -198,9 +197,8 @@
             <div class="follow-section">
                 <p>Follow us to redeem your coupon (Token: <span id="coupon-token"></span>)</p>
                 <p>Above 399Tk. T&C Applied</p>
-                <p></p><b>You have to follow on both platform.Then Scratch</b></p>
-                <a href="https://www.facebook.com/MollaEnterpriseJsr" target="_blank" class="follow-btn facebook-btn" onclick="markFollowed('facebook', 'coupon')">Facebook</a>
-                <a href="https://www.tiktok.com/@mollaenterprise1" target="_blank" onclick="markFollowed('tiktok', 'coupon')" class="follow-btn tiktok-btn">TikTok</a><br>
+                <p><b>You have to follow our Facebook page. Then Scratch</b></p>
+                <a href="https://www.facebook.com/MollaEnterpriseJsr" target="_blank" class="follow-btn facebook-btn" onclick="markFollowed('facebook', 'coupon')">Facebook</a><br>
                 <button class="btn confirm-btn" id="confirm-follow-coupon" onclick="confirmFollow('coupon')" disabled><b>Scratch Card</b></button>
             </div>
             <div class="scratch-box hidden" id="scratch-box-coupon">
@@ -215,9 +213,8 @@
             <div class="follow-section">
                 <p>Follow us to redeem your discount (Token: <span id="discount-token"></span>):</p>
                 <p>Terms & Condition Applied</p>
-                <p></p><b>You have to follow on both platform.Then Scratch</b></p>
-                <a href="https://www.facebook.com/MollaEnterpriseJsr" target="_blank" class="follow-btn facebook-btn" onclick="markFollowed('facebook', 'discount')">Facebook</a>
-                <a href="https://www.tiktok.com/@mollaenterprise1" target="_blank" onclick="markFollowed('tiktok', 'discount')" class="follow-btn tiktok-btn">TikTok</a><br>
+                <p><b>You have to follow our Facebook page. Then Scratch</b></p>
+                <a href="https://www.facebook.com/MollaEnterpriseJsr" target="_blank" class="follow-btn facebook-btn" onclick="markFollowed('facebook', 'discount')">Facebook</a><br>
                 <button class="btn confirm-btn" id="confirm-follow-discount" onclick="confirmFollow('discount')" disabled><b>Scratch Card</b></button>
             </div>
             <div class="scratch-box hidden" id="scratch-box-discount">
@@ -231,7 +228,7 @@
     <script>
         let generated = false;
         const usedTokens = new Set();
-        let followed = { facebook: false, tiktok: false };
+        let followed = { facebook: false }; // Removed TikTok
 
         // Check session storage for previous generation
         if (sessionStorage.getItem('generated')) {
@@ -272,21 +269,21 @@
         }
 
         function getCoupon() {
-    if (generated) return;
+            if (generated) return;
 
-    // Generate a random coupon amount between 20 and 60
-    let couponAmount = Math.floor(Math.random() * 41) + 20; // Random number between 20 and 60
-    couponAmount = Math.round(couponAmount / 10) * 10; // Round to the nearest multiple of 10
+            // Generate a random coupon amount between 20 and 60
+            let couponAmount = Math.floor(Math.random() * 41) + 20; // Random number between 20 and 60
+            couponAmount = Math.round(couponAmount / 10) * 10; // Round to the nearest multiple of 10
 
-    const token = generateToken();
+            const token = generateToken();
 
-    document.getElementById('scratch-coupon').textContent = `BDT ${couponAmount}`;
-    document.getElementById('coupon-token').textContent = token;
-    document.getElementById('coupon-section').classList.remove('hidden');
+            document.getElementById('scratch-coupon').textContent = `BDT ${couponAmount}`;
+            document.getElementById('coupon-token').textContent = token;
+            document.getElementById('coupon-section').classList.remove('hidden');
 
-    disableButtons();
-    initializeScratch('scratch-coupon-canvas', 'scratch-coupon');
-}
+            disableButtons();
+            initializeScratch('scratch-coupon-canvas', 'scratch-coupon');
+        }
 
         function generateDiscount() {
             if (generated) return;
@@ -333,19 +330,18 @@
             initializeScratch('scratch-discount-canvas', 'scratch-discount');
         }
 
-
         function markFollowed(platform, type) {
             followed[platform] = true;
             let btn = document.getElementById(`confirm-follow-${type}`);
-            if (followed.facebook && followed.tiktok) {
+            if (followed.facebook) { // Only check Facebook
                 btn.classList.add("active");
                 btn.disabled = false;
             }
         }
 
         function confirmFollow(type) {
-            if (!(followed.facebook && followed.tiktok)) {
-                alert("Please follow both platforms first!");
+            if (!followed.facebook) { // Only check Facebook
+                alert("Please follow our Facebook page first!");
                 return;
             }
             const scratchBox = document.getElementById(`scratch-box-${type}`);
