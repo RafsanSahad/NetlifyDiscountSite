@@ -316,7 +316,10 @@
                 minDiscount = 500; maxDiscount = 1200;
             }
 
-            const discountAmount = Math.floor(Math.random() * (maxDiscount - minDiscount + 1)) + minDiscount;
+            // Generate a random discount amount and round it to the nearest multiple of 10
+            let discountAmount = Math.floor(Math.random() * (maxDiscount - minDiscount + 1)) + minDiscount;
+            discountAmount = Math.round(discountAmount / 10) * 10; // Round to the nearest multiple of 10
+
             const token = generateToken();
 
             document.getElementById('scratch-discount').textContent = `BDT ${discountAmount}`;
@@ -326,6 +329,7 @@
             disableButtons();
             initializeScratch('scratch-discount-canvas', 'scratch-discount');
         }
+
 
         function markFollowed(platform, type) {
             followed[platform] = true;
