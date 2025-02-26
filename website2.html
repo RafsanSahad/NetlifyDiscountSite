@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Discount & Coupon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: rgb(86, 2, 61);
+            margin: 0;
+            padding: 0;
+        }
+
+        #purchase-label {
+            color: white;
+        }
+
+        .logo {
+            width: 400px;
+            display: block;
+            margin: 20px auto;
+        }
+
+        @media (max-width: 600px) {
+            .logo {
+                width: 350px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .logo {
+                width: 220px;
+            }
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .shop-title {
+            color: #e2e2e2;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .coupon-btn { background-color: #ff6600; color: white; }
+        .discount-btn { background-color: #008000; color: white; }
+        .get-discount-btn { background-color: #008000; color: white; }
+
+        .hidden { display: none; }
+
+        .scratch-box {
+            width: 150%;
+            max-width: 400px;
+            height: 120px;
+            background: grey;
+            margin: 20px auto;
+            position: fixed; /* Fixed positioning */
+            top: 45%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Adjust for exact center */
+            z-index: 1000; /* Ensure it's above other content */
+            touch-action: none;
+        }
+
+        .scratch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+            z-index: 2;
+        }
+
+        .scratch-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: black;
+            background: white;
+            position: absolute;
+            z-index: 0;
+        }
+
+        .follow-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .follow-btn {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 10px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        .facebook-btn { background: #1877F2; }
+        .confirm-btn {
+            background: #ff6600;
+            color: white;
+            font-size: 16px;
+            padding: 12px;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        .confirm-btn.active { cursor: pointer; opacity: 1; }
+
+        .input-field {
+            width: 80%;
+            padding: 10px;
+            margin: 10px auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .time-section {
+            margin-top: 20px;
+            color: white;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="/logo.png" alt="Shop Logo" class="logo">
+        <h2 class="shop-title">Welcome to Our Shop</h2>
+
+        <!-- Time Section -->
+        <div class="time-section">
+            <p>Current Date & Time: <span id="current-time"></span></p>
+        </div>
+        
+        <!-- Main Buttons -->
+        <div class="button-container">
+            <button class="btn coupon-btn" id="coupon-btn" onclick="getCoupon()">Get Your Coupon</button>
+            <button class="btn discount-btn" id="discount-btn" onclick="showDiscountInput()">Discount On Purchase</button>
+        </div>
+
+        <!-- Discount Input Section -->
+        <div id="discount-input-section" class="hidden">
+            <input type="number" id="purchase-amount" class="input-field" placeholder="Enter your purchase amount">
+            <button class="btn get-discount-btn" onclick="generateDiscount()">Claim Discount</button>
+        </div>
+
+        <!-- Coupon Section -->
+        <div id="coupon-section" class="hidden">
+            <div class="follow-section">
+                <p>Follow us to redeem your coupon (Token: <span id="coupon-token"></span>)</p>
+                <p>Above 399Tk. T&C Applied</p>
+                <p><b>You have to follow our Facebook page. Then Scratch</b></p>
+                <a href="https://www.facebook.com/MollaEnterpriseJsr" target="_blank" class="follow-btn facebook-btn" onclick="markFollowed('facebook', 'coupon')">Facebook</a><br>
+                <button class="btn confirm-btn" id="confirm-follow-coupon" onclick="confirmFollow('coupon')" disabled><b>Scratch Card</b></button>
+            </div>
+            <div class="scratch-box hidden" id="scratch-box-coupon">
+                <div class="scratch-content" id="scratch-coupon">BDT 0</div>
+                <div class="scratch-overlay">Scratch Here</div>
+                <canvas id="scratch-coupon-canvas"></canvas>
+            </div>
+        </div>
+
+        <!-- Discount Section -->
+        <div id="discount-section" class="hidden">
+            <div class="follow-section">
+                <p>Follow us to redeem your discount (Token: <span id="discount-token"></span>):</p>
+                <p>Terms & Condition Applied</p>
+                <p><b>You have to follow our Facebook page. Then Scratch</b></p>
+                <a href="https://www.facebook.com/MollaEnterpriseJsr" target="_blank" class="follow-btn facebook-btn" onclick="markFollowed('facebook', 'discount')">Facebook</a><br>
+                <button class="btn confirm-btn" id="confirm-follow-discount" onclick="confirmFollow('discount')" disabled><b>Scratch Card</b></button>
+            </div>
+            <div class="scratch-box hidden" id="scratch-box-discount">
+                <div class="scratch-content" id="scratch-discount">BDT 0</div>
+                <div class="scratch-overlay">Scratch Here</div>
+                <canvas id="scratch-discount-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let generated = false;
+        const usedTokens = new Set();
+        let followed = { facebook: false }; // Removed TikTok
+
+        // Check session storage for previous generation
+        if (sessionStorage.getItem('generated')) {
+            generated = true;
+            disableButtons();
+        }
+
+        // Function to update the current time
+        function updateTime() {
+            const now = new Date();
+            const dateTimeString = now.toLocaleString();
+            document.getElementById('current-time').textContent = dateTimeString;
+        }
+
+        // Update time every second
+        setInterval(updateTime, 1000);
+        updateTime(); // Initial call to display time immediately
+
+        function generateToken() {
+            let token;
+            do {
+                token = '-' + Math.floor(100000 + Math.random() * 900000);
+            } while (usedTokens.has(token));
+            usedTokens.add(token);
+            return token;
+        }
+
+        function disableButtons() {
+            document.getElementById('coupon-btn').disabled = true;
+            document.getElementById('discount-btn').disabled = true;
+            generated = true;
+            sessionStorage.setItem('generated', 'true');
+        }
+
+        function showDiscountInput() {
+            if (generated) return;
+            document.getElementById('discount-input-section').classList.remove('hidden');
+        }
+
+        function getCoupon() {
+            if (generated) return;
+
+            // Generate a random coupon amount between 20 and 60
+            let couponAmount = Math.floor(Math.random() * 41) + 20; // Random number between 20 and 60
+            couponAmount = Math.round(couponAmount / 10) * 10; // Round to the nearest multiple of 10
+
+            const token = generateToken();
+
+            document.getElementById('scratch-coupon').textContent = `BDT ${couponAmount}`;
+            document.getElementById('coupon-token').textContent = token;
+            document.getElementById('coupon-section').classList.remove('hidden');
+
+            disableButtons();
+            initializeScratch('scratch-coupon-canvas', 'scratch-coupon');
+        }
+
+        function generateDiscount() {
+            if (generated) return;
+
+            const amount = parseInt(document.getElementById('purchase-amount').value);
+            if (isNaN(amount) || amount <= 0) {
+                alert("Please enter a valid purchase amount.");
+                return;
+            }
+
+            let minDiscount, maxDiscount;
+
+            if (amount < 1000) {
+                minDiscount = 10; maxDiscount = 50;
+            } else if (amount >= 1000 && amount <= 1500) {
+                minDiscount = 10; maxDiscount = 100;
+            } else if (amount > 1500 && amount <= 2500) {
+                minDiscount = 50; maxDiscount = 150;
+            } else if (amount > 2500 && amount <= 3500) {
+                minDiscount = 100; maxDiscount = 200;
+            } else if (amount > 3500 && amount <= 5000) {
+                minDiscount = 150; maxDiscount = 250;
+            } else if (amount > 5000 && amount <= 8000) {
+                minDiscount = 250; maxDiscount = 350;
+            } else if (amount > 8500 && amount <= 12000) {
+                minDiscount = 250; maxDiscount = 450;
+            } else if (amount > 12000 && amount <= 20000) {
+                minDiscount = 300; maxDiscount = 500;
+            } else { // Greater than 20000
+                minDiscount = 500; maxDiscount = 1200;
+            }
+
+            // Generate a random discount amount and round it to the nearest multiple of 10
+            let discountAmount = Math.floor(Math.random() * (maxDiscount - minDiscount + 1)) + minDiscount;
+            discountAmount = Math.round(discountAmount / 10) * 10; // Round to the nearest multiple of 10
+
+            const token = generateToken();
+
+            document.getElementById('scratch-discount').textContent = `BDT ${discountAmount}`;
+            document.getElementById('discount-token').textContent = token;
+            document.getElementById('discount-section').classList.remove('hidden');
+
+            disableButtons();
+            initializeScratch('scratch-discount-canvas', 'scratch-discount');
+        }
+
+        function markFollowed(platform, type) {
+            followed[platform] = true;
+            let btn = document.getElementById(`confirm-follow-${type}`);
+            if (followed.facebook) { // Only check Facebook
+                btn.classList.add("active");
+                btn.disabled = false;
+            }
+        }
+
+        function confirmFollow(type) {
+            if (!followed.facebook) { // Only check Facebook
+                alert("Please follow our Facebook page first!");
+                return;
+            }
+            const scratchBox = document.getElementById(`scratch-box-${type}`);
+            scratchBox.classList.remove('hidden'); // Show the scratch box
+            alert(`Thank you for following! You can now scratch to reveal your ${type}.`);
+            initializeScratch(`scratch-${type}-canvas`, `scratch-${type}`);
+        }
+
+        function initializeScratch(canvasId, contentId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const scratchContent = document.getElementById(contentId);
+            const scratchOverlay = canvas.previousElementSibling; // Get the overlay element
+
+            canvas.width = scratchContent.offsetWidth;
+            canvas.height = scratchContent.offsetHeight;
+
+            ctx.fillStyle = 'grey';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            let isDrawing = false;
+
+            canvas.addEventListener('mousedown', () => {
+                isDrawing = true;
+                scratchOverlay.style.display = 'none'; // Hide the overlay when scratching starts
+            });
+            canvas.addEventListener('mouseup', () => isDrawing = false);
+            canvas.addEventListener('mousemove', (e) => {
+                if (isDrawing) {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 20, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            canvas.addEventListener('touchstart', () => {
+                isDrawing = true;
+                scratchOverlay.style.display = 'none'; // Hide the overlay when scratching starts
+            });
+            canvas.addEventListener('touchend', () => isDrawing = false);
+            canvas.addEventListener('touchmove', (e) => {
+                if (isDrawing) {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.touches[0].clientX - rect.left;
+                    const y = e.touches[0].clientY - rect.top;
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 20, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+        }
+
+        function openFacebookApp(webUrl, type) {
+            // Mark the platform as followed
+            markFollowed('facebook', type);
+
+            // Attempt to open the Facebook app
+            const appUrl = `fb://profile/MollaEnterpriseJsr`; // Replace with your Facebook profile ID or username
+            window.location.href = appUrl;
+
+            // Fallback to web URL if the app doesn't open
+            setTimeout(() => {
+                if (!document.hidden) {
+                    window.location.href = webUrl;
+                }
+            }, 3500); // Wait 3500ms before falling back
+        }
+    </script>
+</body>
+</html>
