@@ -272,18 +272,21 @@
         }
 
         function getCoupon() {
-            if (generated) return;
+    if (generated) return;
 
-            const couponAmount = Math.floor(Math.random() * 41) + 20; // BDT 20-60
-            const token = generateToken();
+    // Generate a random coupon amount between 20 and 60
+    let couponAmount = Math.floor(Math.random() * 41) + 20; // Random number between 20 and 60
+    couponAmount = Math.round(couponAmount / 10) * 10; // Round to the nearest multiple of 10
 
-            document.getElementById('scratch-coupon').textContent = `BDT ${couponAmount}`;
-            document.getElementById('coupon-token').textContent = token;
-            document.getElementById('coupon-section').classList.remove('hidden');
+    const token = generateToken();
 
-            disableButtons();
-            initializeScratch('scratch-coupon-canvas', 'scratch-coupon');
-        }
+    document.getElementById('scratch-coupon').textContent = `BDT ${couponAmount}`;
+    document.getElementById('coupon-token').textContent = token;
+    document.getElementById('coupon-section').classList.remove('hidden');
+
+    disableButtons();
+    initializeScratch('scratch-coupon-canvas', 'scratch-coupon');
+}
 
         function generateDiscount() {
             if (generated) return;
